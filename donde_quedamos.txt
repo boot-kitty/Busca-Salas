@@ -1,0 +1,11 @@
+Donde Quedamos:
+
+terminar método filtrar salas en selector.py
+falta terminar de desarrollar el sistema de preferencias
+falta implementar la búsqueda rápida y una forma de mostrar una cantidad razonable de resultados (10-25)
+falta implementar la busqueda personalizada usando las preferencias guardas en Selector
+
+
+
+Librerías externas utilizdas:
+pandas

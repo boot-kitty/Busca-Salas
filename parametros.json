@@ -1,0 +1,17 @@
+{
+    "paths": {
+                "directorio_excel": ["datos", "imagen_buscacursos_2023-1.xlsx"],
+                "directorio_salas": ["datos", "salas_sj.bin"]
+            },
+
+    "preferencias": {
+                    "edificios_no_deseados": ["AUD", "SEM", "LAB", "CARA", "REUNION", "POSGRADO", "MUSICA", "PISCINA", "GIMNASIO", "SINTETIC", "ATLETICA", "nan"],
+                    "salas_no_deseadas": ["112", "220"],
+                    "edificios_favoritos": ["AP", "A", "B","E"],
+                    "ordenar_pisos_de_alto_a_bajo": "yes"
+                    },
+
+    "algoritmo_busqueda": {
+
+                            }
+}

@@ -123,10 +123,10 @@ class Selector:
 
         if len(salas_disponibles) == 0:
             print("No se han encontrado salas disponibles, se recomienda ajustar los parámetros de búsqueda")
-            return None
+            return {}
         
         else:
-            return salas_disponibles.keys()
+            return salas_disponibles
 
 
 # -------------------------------------------------------------------------------------------------
@@ -140,25 +140,36 @@ if __name__ == "__main__":
     print("AP502", selector.dict_salas["AP502"].horarios["W"])
     """
 
-    
-    resultados = list(encontrar_sala_desocupada(selector.dict_salas, ("W", 3)).keys())
-    """
-    resultados = selector.encontrar_salas_horarios_multiples("M", (4, 5))
-    """
-    resultados = sorted(resultados)
+    resultados1 = list(encontrar_sala_desocupada(selector.dict_salas, ("W", 1)).keys())
+    resultados2 = list(encontrar_sala_desocupada(selector.dict_salas, ("W", 2)).keys())
+    resultados3 = list(encontrar_sala_desocupada(selector.dict_salas, ("W", 3)).keys())
+    resultados4 = list(encontrar_sala_desocupada(selector.dict_salas, ("W", 4)).keys())
 
-    print("Módulo 4")
-    print(resultados)
     
-    """
-    print(encontrar_sala_desocupada(selector.dict_salas, ("W", 2)).keys())
+    resultados = list(selector.encontrar_salas_horarios_multiples("W", (3, 4)).keys())
+    resultados = sorted(resultados)
+    
+    resultados1 = sorted(resultados1)
+    resultados2 = sorted(resultados2)
+    resultados3 = sorted(resultados3)
+    resultados4 = sorted(resultados4)
+
+    print("Reultados de la búsqueda:")
     print("-"*60)
-    print(encontrar_sala_desocupada(selector.dict_salas, ("W", 3)).keys())
+    print(resultados)
+
     print("-"*60)
-    print(encontrar_sala_desocupada(selector.dict_salas, ("W", 4)).keys())
+    print(resultados1)
     print("-"*60)
+    print(resultados2)
+    print("-"*60)
+    print(resultados3)
+    print("-"*60)
+    print(resultados4)
+    input()
+    
+
     print("--- %s seconds ---" % (t.time() - start_time))
-    """
 
     # !!!
     # J módulo 4 AP 504 aparece listada como disponible pero el atributo 'horario' de la sala dice lo contrario

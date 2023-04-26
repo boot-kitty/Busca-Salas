@@ -136,37 +136,60 @@ if __name__ == "__main__":
     selector = Selector()
     start_time = t.time()
 
+    lista_busqueda = [("M", 4), ("M", 5)]
+    dia = lista_busqueda[0][0]
+    bloques = []
+    for tupla_dia_bloque in lista_busqueda:
+        bloques.append(tupla_dia_bloque[1])
+
     """
-    print("AP502", selector.dict_salas["AP502"].horarios["W"])
+    Sección Outputs
     """
 
-    resultados1 = list(encontrar_sala_desocupada(selector.dict_salas, ("W", 1)).keys())
-    resultados2 = list(encontrar_sala_desocupada(selector.dict_salas, ("W", 2)).keys())
-    resultados3 = list(encontrar_sala_desocupada(selector.dict_salas, ("W", 3)).keys())
-    resultados4 = list(encontrar_sala_desocupada(selector.dict_salas, ("W", 4)).keys())
+    """
+    print("AP503", selector.dict_salas["AP503"].horarios["W"])
+    """
 
+    resultados0 = list(encontrar_sala_desocupada(selector.dict_salas, lista_busqueda[0]).keys())
+    resultados1 = list(encontrar_sala_desocupada(selector.dict_salas, lista_busqueda[1]).keys())
+
+    """
+    resultados2 = list(encontrar_sala_desocupada(selector.dict_salas, lista_busqueda[2]).keys())
+    resultados3 = list(encontrar_sala_desocupada(selector.dict_salas, lista_busqueda[3]).keys())
+    """
+
+    interseccion = list(selector.encontrar_salas_horarios_multiples(dia, bloques).keys())
+    interseccion = sorted(interseccion)
     
-    resultados = list(selector.encontrar_salas_horarios_multiples("W", (3, 4)).keys())
-    resultados = sorted(resultados)
     
-    resultados1 = sorted(resultados1)
-    resultados2 = sorted(resultados2)
-    resultados3 = sorted(resultados3)
-    resultados4 = sorted(resultados4)
+    resultados1 = sorted(resultados0)
+    resultados2 = sorted(resultados1)
 
-    print("Reultados de la búsqueda:")
-    print("-"*60)
-    print(resultados)
+    """
+    resultados3 = sorted(resultados2)
+    resultados4 = sorted(resultados3)
+    """
 
+    print(f"Resultados de Búsqueda para: {lista_busqueda}\n\n"
+            + "-"*18 + "Resultados Intersección" + "-"*19 + "\n"
+            + f"{interseccion}"
+        )
+    
+    print("\n" + "-"*22 + "Resultados Unión" + "-"*22)
+    
+    print(resultados0)
     print("-"*60)
     print(resultados1)
     print("-"*60)
+    
+    """
     print(resultados2)
     print("-"*60)
     print(resultados3)
-    print("-"*60)
-    print(resultados4)
+    """
+
     input()
+
     
 
     print("--- %s seconds ---" % (t.time() - start_time))

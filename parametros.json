@@ -5,8 +5,8 @@
             },
 
     "preferencias": {
-                    "edificios_no_deseados": ["AUD", "SEM", "LAB", "CARA", "REUNION", "POSGRADO", "MUSICA", "PISCINA", "GIMNASIO", "SINTETIC", "ATLETICA", "nan"],
-                    "salas_no_deseadas": ["112", "220", "218"],
+                    "edificios_no_deseados": ["AUD", "SEM", "LAB", "CARA", "REUNION", "POSGRADO", "MUSICA", "PISCINA", "GIMNASIO", "SINTETIC", "ATLETICA", "nan", "SALA ", "CORPORAL", "COM", "_", ".", "-"],
+                "salas_no_deseadas": ["112", "220", "218", "JPINTO", "LMONTECINO", "HLARRAIN", "MULTIUSO", "PATAGONIA", "ATACAMA", "SIMULACION", "SPG", "MDIDIER"],
                     "edificios_favoritos": ["AP", "A", "B","E"],
                     "ordenar_pisos_de_alto_a_bajo": "yes"
                     },

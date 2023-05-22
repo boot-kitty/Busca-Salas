@@ -3,7 +3,8 @@
 mensajes_error = {
     -1000: "\nERROR: el número ingresado no se encuentra dentro de las opciones desplegadas",
     -2000: "\nERROR: el input ingresado no corresponde a un número, " 
-            + "ni a la opción Salir del programa"
+            + "ni a la opción Salir del programa",
+    1000: "\nERROR: la lista de búsqueda ingresada se encuentra vacía"
     }
 
 # -------------------------------------------------------------------------------------------------

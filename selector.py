@@ -2,6 +2,7 @@
 import datetime as dt
 import time as t
 import salas as s
+import errores_y_excepciones as e
 
 # Imports Propios:
 import lector_de_archivos as l
@@ -116,10 +117,10 @@ class Selector:
             edificio = self.parametros_busqueda['edificios_favoritos'][i]
     
 
-    def encontrar_salas_horarios_multiples(self, dia: str, tupla_bloques: tuple):
+    def encontrar_interseccion_horarios(self, tupla_requests: tuple):
         salas_disponibles = self.dict_salas
-        for bloque in tupla_bloques:
-            salas_disponibles = encontrar_sala_desocupada(salas_disponibles, (dia, bloque))
+        for request in tupla_requests:
+            salas_disponibles = encontrar_sala_desocupada(salas_disponibles, (request[0], request[1]))
 
         if len(salas_disponibles) == 0:
             print("No se han encontrado salas disponibles, se recomienda ajustar los parámetros de búsqueda")
@@ -127,76 +128,62 @@ class Selector:
         
         else:
             return salas_disponibles
+        
 
+    def mostrar_resultados_busqueda(self, lista_de_busqueda: list, interseccion_resultados: dict, union_resultados: list):
+
+        if interseccion_resultados is not None:
+            print(f"Resultados de Búsqueda para: {lista_de_busqueda}\n\n"
+                + "-"*15 + " Resultados Intersección " + "-"*15 + "\n"
+                + f"{interseccion_resultados.keys()}"
+                + "\n\n" + "-"*20 + " Resultados Unión " + "-"*17)
+            
+            for resultado in union_resultados:
+                print(f"{resultado.keys()}"
+                      + "\n" + "-"*58)
+
+        else:
+             print(f"Resultados de Búsqueda para: {lista_de_busqueda}\n\n"
+                    + "-"*14 + " Resultados Búsqueda Única " + "-"*14 + "\n"
+                    + f"{union_resultados[0].keys()}"
+                    + "\n" + "-"*58)
+
+
+    def buscar_salas(self, lista_de_busqueda: list):
+        union_resultados = []
+
+        for request in lista_de_busqueda:
+            resultados_request = encontrar_sala_desocupada(self.dict_salas, request)
+            union_resultados.append(resultados_request)
+        
+        if len(lista_de_busqueda) > 1:
+            interseccion_resultados = self.encontrar_interseccion_horarios(lista_de_busqueda)
+            self.mostrar_resultados_busqueda(lista_de_busqueda, interseccion_resultados, union_resultados)
+
+        else:
+            self.mostrar_resultados_busqueda(lista_de_busqueda, None, union_resultados)
+            
 
 # -------------------------------------------------------------------------------------------------
 
 # Código:
 if __name__ == "__main__":
-    selector = Selector()
     start_time = t.time()
+    selector = Selector()
 
-    lista_busqueda = [("M", 4), ("M", 5)]
-    dia = lista_busqueda[0][0]
-    bloques = []
-    for tupla_dia_bloque in lista_busqueda:
-        bloques.append(tupla_dia_bloque[1])
-
-    """
-    Sección Outputs
-    """
-
-    """
-    print("AP503", selector.dict_salas["AP503"].horarios["W"])
-    """
-
-    resultados0 = list(encontrar_sala_desocupada(selector.dict_salas, lista_busqueda[0]).keys())
-    resultados1 = list(encontrar_sala_desocupada(selector.dict_salas, lista_busqueda[1]).keys())
-
-    """
-    resultados2 = list(encontrar_sala_desocupada(selector.dict_salas, lista_busqueda[2]).keys())
-    resultados3 = list(encontrar_sala_desocupada(selector.dict_salas, lista_busqueda[3]).keys())
-    """
-
-    interseccion = list(selector.encontrar_salas_horarios_multiples(dia, bloques).keys())
-    interseccion = sorted(interseccion)
+    tupla_busqueda = [("L", 1)]
+    selector.buscar_salas(tupla_busqueda)
     
-    
-    resultados1 = sorted(resultados0)
-    resultados2 = sorted(resultados1)
-
-    """
-    resultados3 = sorted(resultados2)
-    resultados4 = sorted(resultados3)
-    """
-
-    print(f"Resultados de Búsqueda para: {lista_busqueda}\n\n"
-            + "-"*18 + "Resultados Intersección" + "-"*19 + "\n"
-            + f"{interseccion}"
-        )
-    
-    print("\n" + "-"*22 + "Resultados Unión" + "-"*22)
-    
-    print(resultados0)
-    print("-"*60)
-    print(resultados1)
-    print("-"*60)
-    
-    """
-    print(resultados2)
-    print("-"*60)
-    print(resultados3)
-    """
-
-    input()
-
-    
-
-    print("--- %s seconds ---" % (t.time() - start_time))
+    print("\n" + "--- %s seconds ---" % (t.time() - start_time))
 
     # !!!
-    # J módulo 4 AP 504 aparece listada como disponible pero el atributo 'horario' de la sala dice lo contrario
     # M módulo 4 AP está ocupada y listada como disponible
     # !!!
 
-    #J módulo 3 no hay AP
+    #J módulo 3 no hay AP 
+    # WhatsApp -> 33 caracteres monoespaciados  
+
+    # Formato Propio ((15, 15), (20, 17), 58)
+    # formato seba ((10, 10), (13, 14), 48)
+    
+    

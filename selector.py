@@ -134,18 +134,19 @@ class Selector:
 
         if interseccion_resultados is not None:
             print(f"Resultados de Búsqueda para: {lista_de_busqueda}\n\n"
-                + "-"*15 + " Resultados Intersección " + "-"*15 + "\n"
-                + f"{interseccion_resultados.keys()}"
-                + "\n\n" + "-"*20 + " Resultados Unión " + "-"*17)
+                + "-"*15 + " Resultados Intersección " + "-"*15,
+                "\n", *interseccion_resultados.keys(),
+                "\n\n" + "-"*20 + " Resultados Unión " + "-"*17
+                )
             
             for resultado in union_resultados:
-                print(f"{resultado.keys()}"
-                      + "\n" + "-"*58)
+                print(*resultado.keys(),
+                      "\n" + "-"*58)
 
         else:
              print(f"Resultados de Búsqueda para: {lista_de_busqueda}\n\n"
-                    + "-"*14 + " Resultados Búsqueda Única " + "-"*14 + "\n"
-                    + f"{union_resultados[0].keys()}"
+                    + "-"*14 + " Resultados Búsqueda Única " + "-"*14 + "\n",
+                    *union_resultados[0].keys(),
                     + "\n" + "-"*58)
 
 
@@ -171,7 +172,7 @@ if __name__ == "__main__":
     start_time = t.time()
     selector = Selector()
 
-    tupla_busqueda = [("L", 1)]
+    tupla_busqueda = [("M", 4), ("M", 5)]
     selector.buscar_salas(tupla_busqueda)
     
     print("\n" + "--- %s seconds ---" % (t.time() - start_time))

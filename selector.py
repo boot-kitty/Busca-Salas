@@ -147,7 +147,7 @@ class Selector:
              print(f"Resultados de Búsqueda para: {lista_de_busqueda}\n\n"
                     + "-"*14 + " Resultados Búsqueda Única " + "-"*14 + "\n",
                     *union_resultados[0].keys(),
-                    + "\n" + "-"*58)
+                    "\n" + "-"*58)
 
 
     def buscar_salas(self, lista_de_busqueda: list):
@@ -172,11 +172,12 @@ if __name__ == "__main__":
     start_time = t.time()
     selector = Selector()
 
-    tupla_busqueda = [("M", 4), ("M", 5)]
+    tupla_busqueda = [("L", 3), ("L", 4)]
     selector.buscar_salas(tupla_busqueda)
     
     print("\n" + "--- %s seconds ---" % (t.time() - start_time))
-
+    a = input()
+    
     # !!!
     # M módulo 4 AP está ocupada y listada como disponible
     # !!!

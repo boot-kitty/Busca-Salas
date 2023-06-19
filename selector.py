@@ -82,6 +82,13 @@ def encontrar_sala_desocupada(dict_salas: dict, tupla_dia_bloque: tuple):
     salas_desocupadas = dict(filter(lambda sala: desocupada(sala, tupla_dia_bloque), dict_salas.items()))
     return salas_desocupadas
 
+
+def ordernar_diccionario(dict_desordenado: dict) -> dict:
+    lista_llaves = list(dict_desordenado.keys())
+    lista_llaves.sort()
+    dict_ordenado = {i: dict_desordenado[i] for i in lista_llaves}
+
+    return dict_ordenado
 # -------------------------------------------------------------------------------------------------
 
 # Clases:
@@ -140,13 +147,15 @@ class Selector:
                 )
             
             for resultado in union_resultados:
+                resultado = ordernar_diccionario(resultado)
                 print(*resultado.keys(),
                       "\n" + "-"*58)
 
         else:
-             print(f"Resultados de Búsqueda para: {lista_de_busqueda}\n\n"
+            resultado = ordernar_diccionario(union_resultados[0])
+            print(f"Resultados de Búsqueda para: {lista_de_busqueda}\n\n"
                     + "-"*14 + " Resultados Búsqueda Única " + "-"*14 + "\n",
-                    *union_resultados[0].keys(),
+                    *resultado.keys(),
                     "\n" + "-"*58)
 
 
@@ -158,7 +167,7 @@ class Selector:
             union_resultados.append(resultados_request)
         
         if len(lista_de_busqueda) > 1:
-            interseccion_resultados = self.encontrar_interseccion_horarios(lista_de_busqueda)
+            interseccion_resultados = ordernar_diccionario(self.encontrar_interseccion_horarios(lista_de_busqueda))
             self.mostrar_resultados_busqueda(lista_de_busqueda, interseccion_resultados, union_resultados)
 
         else:

@@ -95,7 +95,7 @@ def actualizar_horarios_diccionario_salas(df: pd.DataFrame, dict_salas: dict):
 
 def guardar_datos_salas(dict_salas: dict):
     """
-    Esta función guarda el diccionario conteniendo las instancias Sala del campus SJ con sus respectivos horarios
+    Esta función guarda el diccionario conteniendo las instancias 'Sala' del campus SJ con sus respectivos horarios
     """
     directorio_datos_salas = os.path.join(*obtener_parametro("paths", "directorio_salas"))
     with open(directorio_datos_salas, "wb") as archivo_datos:

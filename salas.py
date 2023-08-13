@@ -4,12 +4,12 @@ class Sala:
 
     def __init__(self, nombre):
         self.nombre = str(nombre)
-        self.horarios = {'L':[True, True, True, True, True, True, True, True],
-                        'M':[True, True, True, True, True, True, True, True],
-                        'W':[True, True, True, True, True, True, True, True],
-                        'J':[True, True, True, True, True, True, True, True],
-                        'V':[True, True, True, True, True, True, True, True],
-                        'S':[True, True, True, True, True, True, True, True]
+        self.horarios = {'L':[True, True, True, True, True, True, True, True, True],
+                        'M':[True, True, True, True, True, True, True, True, True],
+                        'W':[True, True, True, True, True, True, True, True, True],
+                        'J':[True, True, True, True, True, True, True, True, True],
+                        'V':[True, True, True, True, True, True, True, True, True],
+                        'S':[True, True, True, True, True, True, True, True, True]
                         }
 
     def actualizar_horarios(self, tp_dia_bloque):

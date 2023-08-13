@@ -20,60 +20,6 @@ def determinar_dia_actual():
     return dias_semana[fecha_actual.weekday()]
 
 
-def determinar_numero_bloque():
-    """
-    Esta función se encarga de determinar el bloque actual de acuerdo a la hora correspondiente
-    """
-    hora_actual = dt.datetime.now()
-    lista_hora_actual = hora_actual.strftime("%H:%M").split(":")
-    hora = int(lista_hora_actual[0])
-    minuto = int(lista_hora_actual[1])
-
-    # Horarios antes del bloque 1
-    if (hora <= 8) and (minuto < 30):
-        bloque = -1
-
-    elif (hora == 8 and minuto >= 30) or (hora == 9 and minuto <= 50):
-        bloque = 1
-
-    elif (hora == 9 and minuto > 50) or (hora == 10) or (hora == 11 and minuto <= 20):
-        bloque = 2
-
-    elif (hora == 11 and minuto > 20) or (hora == 12 and minuto <= 50):
-        bloque = 3
-
-    # Horario de almuerzo
-    elif (hora == 12 and minuto > 50) or (hora == 13 and minuto <= 50):
-        bloque = -2
-
-    elif (hora == 13 and minuto > 50) or (hora == 14) or (hora == 15 and minuto <= 20):
-        bloque = 4
-
-    elif (hora == 15 and minuto > 20) or (hora == 16 and minuto <= 50):
-        bloque = 5
-
-    elif (hora == 17) or (hora == 18 and minuto <= 20):
-        bloque = 6
-
-    elif (hora == 18 and minuto > 20) or (hora == 19 and minuto <= 50):
-        bloque = 7
-
-    elif (hora == 19 and minuto > 50) or (hora == 20) or (hora == 21 and minuto <= 20):
-        bloque = 8
-
-    # Horarios después del bloque 8
-    elif (hora == 21 and minuto > 20) or (hora > 21):
-        bloque = -3
-
-    return bloque
-
-
-def determinar_bloque_actual():
-    dia = determinar_dia_actual()
-    bloque = determinar_numero_bloque()
-    return (dia, bloque)
-
-
 def desocupada(sala: s.Sala, tupla_dia_bloque: tuple):
     return sala[1].horarios[tupla_dia_bloque[0]][tupla_dia_bloque[1] - 1]
 
@@ -181,7 +127,7 @@ if __name__ == "__main__":
     start_time = t.time()
     selector = Selector()
 
-    tupla_busqueda = [("L", 3), ("L", 4)]
+    tupla_busqueda = [("J", 5), ("J", 6)]
     selector.buscar_salas(tupla_busqueda)
     
     print("\n" + "--- %s seconds ---" % (t.time() - start_time))

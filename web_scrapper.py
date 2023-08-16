@@ -5,7 +5,29 @@ from bs4 import BeautifulSoup
 # -------------------------------------------------------------------------------------------------
 
 # Funciones:
-def extract_row_data(row):
+def generate_url_list(unidades_academicas:dict, unidades_academicas_extensas:list, url_data):
+    pass
+
+def assemble_url(url_data: dict, campus:str, unidad_academica: int, *modulo) -> str:
+    """
+    This function returns a string, representing a url for a search query that can be used by 'scrape_courses_data'
+    """
+    url = (url_data['url_components']['domain_request']
+            + url_data['url_components']['semester'] + url_data['semestre_actual']
+            + url_data['url_components']['constant_data-1']
+            + url_data['url_components']['campus'] + campus
+            + url_data['url_components']['acamedic_unit'] + str(unidad_academica)
+            + url_data['url_components']['constant_data-2']
+            )
+
+    if modulo != ():
+        url += (url_data['url_components']['module'] + modulo[0])
+
+    url += url_data['url_components']['tail']
+    return url
+
+
+def extract_row_data(row) -> list:
     """
     This function splits the 'Horario' table for each class and returns 
     a list containing both the assigned classroom and the time block 
@@ -22,7 +44,7 @@ def extract_row_data(row):
     return [Horario, Sala]
 
 
-def scrape_course_data(url: str) -> pd.DataFrame:
+def scrape_courses_data(url: str) -> pd.DataFrame:
     """
     This function recives a web url for the page 'https://buscacursos.uc.cl/' in the form of a string 
     and returns a DataFrame with all the 'Horarios' and 'Salas' listed
@@ -53,6 +75,27 @@ def scrape_course_data(url: str) -> pd.DataFrame:
 def scrape_buscacursos(urls_list):
     data_buscacursos = pd.DataFrame({'Horario': [], 'Salas': []})
     for url in urls_list:
-        data_buscacursos.append(scrape_course_data(url))
+        data_buscacursos.append(scrape_courses_data(url))
 
-    
+
+# -------------------------------------------------------------------------------------------------
+
+# Código:
+if __name__ == "__main__":
+
+    aaaa = {
+            "semestre_actual": "2023-2",
+            "url_components": {
+                                "domain_request":"https://buscacursos.uc.cl/?",
+                                "semester": "cxml_semestre=",
+                                "constant_data-1": "&cxml_sigla=&cxml_nrc=&cxml_nombre=&cxml_categoria=TODOS&cxml_area_fg=TODOS&cxml_formato_cur=TODOS&cxml_profesor=", 
+                                "campus": "&cxml_campus=",
+                                "acamedic_unit": "&cxml_unidad_academica=",
+                                "constant_data-2": "&cxml_horario_tipo_busqueda=si_tenga&cxml_horario_tipo_busqueda_actividad=TODOS",
+                                "module": "&cxml_modulo_",
+                                "tail": "#resultados"
+                                }
+        }
+
+    test_url = assemble_url(aaaa, 'San+Joaquín', 0, "W5=W5")
+    print(test_url)

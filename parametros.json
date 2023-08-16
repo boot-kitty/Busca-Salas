@@ -1,17 +1,62 @@
 {
-    "paths": {
-                "directorio_excel": ["datos", "imagen_buscacursos_2023-1.xlsx"],
-                "directorio_salas": ["datos", "salas_sj.bin"]
+    "urls-data":{
+        "semestre_actual": "2023-2",
+        "url_components": {
+            "domain_request":"https://buscacursos.uc.cl/?",
+            "semester": "cxml_semestre=",
+            "constant_data-1": "&cxml_sigla=&cxml_nrc=&cxml_nombre=&cxml_categoria=TODOS&cxml_area_fg=TODOS&cxml_formato_cur=TODOS&cxml_profesor=", 
+            "campus": "&cxml_campus=",
+            "acamedic_unit": "&cxml_unidad_academica=",
+            "constant_data-2": "&cxml_horario_tipo_busqueda=si_tenga&cxml_horario_tipo_busqueda_actividad=TODOS",
+            "module": "&cxml_modulo_",
+            "tail": "#resultados"
             },
 
+        "unidades_academicas_extensas": [],
+
+        "unidades_academicas": {
+            "actividades_filosofia": 68,
+            "actividades_universitarias": 0,
+            "actuacion": 34,
+            "agronomia": 11,
+            "antropologia": 92,
+            "arquitectura": 94,
+            "arte": 33,
+            "astrofisica": 2,
+            "bachillerato": 7,
+            "CARA": 52,
+            "ciencia_politica": 45,
+            "ciencias_biologicas": 12,
+            "ciencias_de_la_salud": 16,
+            "college": 9,
+            "comunicaciones": 28,
+            "construccion_civil": 1,
+            "deportes": 53,
+            "derecho": 17,
+            "desarrollo_sustentable": 25,
+            "diseno": 59,
+            "economia": 5,
+            "educacion": 20,
+            "enfermeria": 13,
+            "escuela_de_gobierno": 19,
+            "escuela_de_graduadoos": 40,
+            "estudios_urbanos": 95,
+            "estetica": 51,
+            "filosofia": 67
+            },
+
+        "unidades_sin_datos": ["actividades_filosofia", "arquitectura", "bachillerato", "college", "deportes"]
+    },
+
+    "paths": {
+        "directorio_excel": ["datos", "imagen_buscacursos_2023-1.xlsx"],
+        "directorio_salas": ["datos", "salas_sj.bin"]
+    },
+
     "preferencias": {
-                    "edificios_no_deseados": ["AUD", "SEM", "LAB", "CARA", "REUNION", "POSGRADO", "MUSICA", "PISCINA", "GIMNASIO", "SINTETIC", "ATLETICA", "nan", "SALA ", "CORPORAL", "COM", "_", ".", "-"],
-                    "salas_no_deseadas": ["112", "220", "218", "JPINTO", "LMONTECINO", "HLARRAIN", "MULTIUSO", "PATAGONIA", "ATACAMA", "SIMULACION", "SPG", "MDIDIER" , "SYULIS", "ALT", "ULMA", "LD", "IIC", "ICC"],
-                    "edificios_favoritos": ["AP", "A", "B","E"],
-                    "ordenar_pisos_de_alto_a_bajo": "yes"
-                    },
-
-    "algoritmo_busqueda": {
-
-                            }
+        "edificios_no_deseados": ["AUD", "SEM", "LAB", "CARA", "REUNION", "POSGRADO", "MUSICA", "PISCINA", "GIMNASIO", "SINTETIC", "ATLETICA", "nan", "SALA ", "CORPORAL", "COM", "_", ".", "-"],
+        "salas_no_deseadas": ["112", "220", "218", "JPINTO", "LMONTECINO", "HLARRAIN", "MULTIUSO", "PATAGONIA", "ATACAMA", "SIMULACION", "SPG", "MDIDIER" , "SYULIS", "ALT", "ULMA", "LD", "IIC", "ICC"],
+        "edificios_favoritos": ["AP", "A", "B","E"],
+        "ordenar_pisos_de_alto_a_bajo": "yes"
+        }
 }

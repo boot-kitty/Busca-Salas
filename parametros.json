@@ -12,7 +12,31 @@
             "tail": "#resultados"
             },
 
-        "unidades_academicas_extensas": [],
+        "unidades_academicas_extensas": [
+            "agronomia",
+            "antropologia",
+            "ciencia_politica",
+            "astrofisica",
+            "ciencias_de_la_salud",
+            "construccion_civil",
+            "economia",
+            "educacion",
+            "enfermeria",
+            "filosofia",
+            "fisica",
+            "geografia",
+            "historia",
+            "ingenieria",
+            "letras",
+            "matematicas",
+            "odontologia",
+            "psicologia",
+            "quimica",
+            "requisito_idioma",
+            "sociologia",
+            "teologia",
+            "trabajo_social"
+            ],
 
         "unidades_academicas": {
             "actividades_filosofia": 68,
@@ -42,10 +66,31 @@
             "escuela_de_graduadoos": 40,
             "estudios_urbanos": 95,
             "estetica": 51,
-            "filosofia": 67
+            "filosofia": 67,
+            "fisica": 3,
+            "geografia": 57,
+            "historia": 56,
+            "ing_mat": 23,
+            "ingenieria": 4,
+            "ing_bio_med": 18,
+            "eticas_aplicadas": 26,
+            "letras": 64,
+            "matematicas": 6,
+            "medicina": 14,
+            "veterniaria": 24,
+            "musica": 70,
+            "odontologia": 15,
+            "psicologia": 29,
+            "quimica": 10,
+            "farmacia": 8,
+            "requisito_idioma": 54,
+            "sociologia": 91,
+            "teologia": 38,
+            "trabajo_social": 30,
+            "villarica": 21
             },
 
-        "unidades_sin_datos": ["actividades_filosofia", "arquitectura", "bachillerato", "college", "deportes"]
+        "unidades_sin_datos": ["actividades_filosofia", "arquitectura", "bachillerato", "college", "deportes", "farmacia", "villarica"]
     },
 
     "paths": {

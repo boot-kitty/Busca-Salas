@@ -90,7 +90,12 @@
             "villarica": 21
             },
 
-        "unidades_sin_datos": ["actividades_filosofia", "arquitectura", "bachillerato", "college", "deportes", "farmacia", "villarica"]
+        "unidades_sin_datos": ["actividades_filosofia", "arquitectura", "bachillerato", "college", "deportes", "farmacia", "villarica"],
+
+        "site_warnings": [
+            "La búsqueda no produjo resultados.",
+            "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 50 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados."
+            ]
     },
 
     "paths": {

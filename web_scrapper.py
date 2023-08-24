@@ -5,6 +5,23 @@ from bs4 import BeautifulSoup
 # -------------------------------------------------------------------------------------------------
 
 # Funciones:
+def check_site_warnings(soup:BeautifulSoup, site_warnings):
+    try:
+        warning_msg = soup.find('div', class_='bordeBonito').text.strip()
+
+        if warning_msg == site_warnings[0]:
+            return 0
+        
+        elif warning_msg == site_warnings[1]:
+            return 1
+        
+        else:
+            print(warning_msg)
+
+    except:
+        return None
+
+
 def assemble_url(url_data: dict, campus:str, unidad_academica: int, *modulo) -> str:
     """
     This function returns a string, representing a url for a search query that can be used by 'scrape_courses_data'
@@ -22,46 +39,6 @@ def assemble_url(url_data: dict, campus:str, unidad_academica: int, *modulo) -> 
 
     url += url_data['url_components']['tail']
     return url
-
-def test_within_search_limit(url:str) -> bool:
-    """
-    This function checks if a search query complies with the result limit 'buscacursos'
-    is allowed to show without cropping the results. Returning 'False' if the limit is exceeded, 
-    or 'True' if it isn't
-    """
-    response = requests.get(url)
-    html_content = response.content
-
-    soup = BeautifulSoup(html_content, 'html.parser')
-
-    try:
-        soup.find('div', class_='bordeBonito').text.strip()
-        return False
-
-    except:
-        return True
-
-
-def test_url_data_indexation(unidades_academicas:dict, unidades_academicas_extensas:list, unidades_academicas_sin_datos: list, url_data: dict):
-    todo_correcto = True
-
-    for ua in unidades_academicas:
-
-        if ua not in unidades_academicas_sin_datos:
-
-            if (ua not in unidades_academicas_extensas) == test_within_search_limit(assemble_url( url_data, 'San+Joaquín', unidades_academicas[ua])):
-                pass
-                print(f'{ua} correctamente indexado')
-
-            else:
-                todo_correcto = False
-                print(f'ERROR en {ua}')
-
-    if todo_correcto:
-        print('Dataset Correcto')
-
-                
-
 
 def extract_row_data(row) -> list:
     """
@@ -213,5 +190,35 @@ if __name__ == "__main__":
 
     unidades_sin_datos = ["actividades_filosofia", "arquitectura", "bachillerato", "college", "deportes", "farmacia", "villarica"]
 
-    
-    
+    site_warnings = [
+        "La búsqueda no produjo resultados.",
+        "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 50 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados."
+        ]
+
+    test_url = "https://buscacursos.uc.cl/?cxml_semestre=2023-2&cxml_sigla=&cxml_nrc=&cxml_nombre=&cxml_categoria=TODOS&cxml_area_fg=TODOS&cxml_formato_cur=TODOS&cxml_profesor=&cxml_campus=San+Joaqu%C3%ADn&cxml_unidad_academica=11&cxml_horario_tipo_busqueda=si_tenga&cxml_horario_tipo_busqueda_actividad=TODOS#resultados"
+    print(check_site_warnings(test_url, site_warnings))
+    #test_url_data_indexation(unidades_academicas, unidades_academicas_extensas, unidades_sin_datos, aaaa)
+
+
+
+"""
+def test_url_data_indexation(unidades_academicas:dict, unidades_academicas_extensas:list, unidades_academicas_sin_datos: list, url_data: dict):
+
+    #This function checks that all extensive and non-extensive academic units are indexed correctly
+
+    todo_correcto = True
+    for ua in unidades_academicas:
+
+        if ua not in unidades_academicas_sin_datos:
+
+            if (ua not in unidades_academicas_extensas) == check_site_warnings(assemble_url( url_data, 'San+Joaquín', unidades_academicas[ua])):
+                pass
+                print(f'{ua} correctamente indexado')
+
+            else:
+                todo_correcto = False
+                print(f'ERROR en {ua}')
+
+    if todo_correcto:
+        print('Dataset Correcto')
+"""

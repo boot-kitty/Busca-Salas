@@ -15,6 +15,7 @@ def check_site_warnings(soup:BeautifulSoup, site_warnings):
         elif warning_msg == site_warnings[1]:
             return 1
         
+        # In case an undefined error pops up
         else:
             print(warning_msg)
 
@@ -39,6 +40,30 @@ def assemble_url(url_data: dict, campus:str, unidad_academica: int, *modulo) -> 
 
     url += url_data['url_components']['tail']
     return url
+
+
+def build_urls_list(unidades_academicas:list, unidades_academicas_extensas:list, unidades_sin_datos:list, 
+                    url_data:dict, modulos:list, campus="San+Joaqu%C3%ADn") -> list:
+    """
+    This function creates a list holding all the urls for search queries that can be used by 'scrape_courses_data', 
+    those representing an 'unidad academica' part of 'unidades_academicas_extensas' are split into multiple queries by their 'modulo'
+    """
+    urls_list = []
+
+    for unidad_academica in unidades_academicas:
+
+        if unidad_academica in unidades_sin_datos:
+            continue
+        
+        elif unidad_academica not in unidades_academicas_extensas:
+            urls_list.append(assemble_url(url_data, campus, unidad_academica))
+
+        else:
+            for modulo in modulos:
+                pass
+
+    return urls_list
+
 
 def extract_row_data(row) -> list:
     """
@@ -86,9 +111,12 @@ def scrape_courses_data(url: str) -> pd.DataFrame:
 
 
 def scrape_buscacursos(urls_list):
+    i = 0
     data_buscacursos = pd.DataFrame({'Horario': [], 'Salas': []})
     for url in urls_list:
         data_buscacursos.append(scrape_courses_data(url))
+        print(f"Dataframe shape: {data_buscacursos.shape[0]}, Iteration: {i}")
+        i+=1
 
 
 # -------------------------------------------------------------------------------------------------
@@ -195,13 +223,16 @@ if __name__ == "__main__":
         "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 50 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados."
         ]
 
-    test_url = "https://buscacursos.uc.cl/?cxml_semestre=2023-2&cxml_sigla=&cxml_nrc=&cxml_nombre=&cxml_categoria=TODOS&cxml_area_fg=TODOS&cxml_formato_cur=TODOS&cxml_profesor=&cxml_campus=San+Joaqu%C3%ADn&cxml_unidad_academica=11&cxml_horario_tipo_busqueda=si_tenga&cxml_horario_tipo_busqueda_actividad=TODOS#resultados"
-    print(check_site_warnings(test_url, site_warnings))
-    #test_url_data_indexation(unidades_academicas, unidades_academicas_extensas, unidades_sin_datos, aaaa)
+    #scrape_courses_data()
 
 
 
 """
+test_url = "https://buscacursos.uc.cl/?cxml_semestre=2023-2&cxml_sigla=&cxml_nrc=&cxml_nombre=&cxml_categoria=TODOS&cxml_area_fg=TODOS&cxml_formato_cur=TODOS&cxml_profesor=&cxml_campus=San+Joaqu%C3%ADn&cxml_unidad_academica=11&cxml_horario_tipo_busqueda=si_tenga&cxml_horario_tipo_busqueda_actividad=TODOS#resultados"
+  
+print(check_site_warnings(test_url, site_warnings))
+    #test_url_data_indexation(unidades_academicas, unidades_academicas_extensas, unidades_sin_datos, aaaa)
+
 def test_url_data_indexation(unidades_academicas:dict, unidades_academicas_extensas:list, unidades_academicas_sin_datos: list, url_data: dict):
 
     #This function checks that all extensive and non-extensive academic units are indexed correctly
@@ -221,4 +252,6 @@ def test_url_data_indexation(unidades_academicas:dict, unidades_academicas_exten
 
     if todo_correcto:
         print('Dataset Correcto')
+
+    test_url_data_indexation(unidades_academicas, unidades_academicas_extensas, unidades_sin_datos, aaaa)
 """

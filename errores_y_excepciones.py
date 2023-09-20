@@ -5,7 +5,8 @@ mensajes_error = {
     -2000: "\nERROR: el input ingresado no corresponde a un número, " 
             + "ni a la opción Salir del programa",
     1000: "\nERROR: la lista de búsqueda ingresada se encuentra vacía",
-    2000: "\nERROR: la busqueda realiza excede el limite de resultados que puede mostrar 'buscacursos'"
+    2000: "\nERROR: la búsqueda realiza excede el limite de resultados que puede mostrar 'buscacursos'",
+    2001: "\nERROR: la búsqueda realizada no entrega ningún resultado"
     }
 
 # -------------------------------------------------------------------------------------------------
@@ -16,4 +17,8 @@ class ErrorInputFueraDeRango(Exception):
 
 class ErrorBusquedaMuyAmplia(Exception):
     # error asociado: 2000
+    pass
+
+class ErrorBusquedaVacia(Exception):
+    # error asociado: 2001
     pass

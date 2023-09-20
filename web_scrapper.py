@@ -1,3 +1,6 @@
+# Imports Propios:
+import errores_y_excepciones as e
+
 # Imports Externos:
 import requests
 import pandas as pd
@@ -10,10 +13,10 @@ def check_site_warnings(soup:BeautifulSoup, site_warnings):
         warning_msg = soup.find('div', class_='bordeBonito').text.strip()
 
         if warning_msg == site_warnings[0]:
-            return 0
+            raise e.ErrorBusquedaVacia
         
         elif warning_msg == site_warnings[1]:
-            return 1
+            raise e.ErrorBusquedaMuyAmplia
         
         # In case an undefined error pops up
         else:
@@ -25,7 +28,7 @@ def check_site_warnings(soup:BeautifulSoup, site_warnings):
 
 def assemble_url(url_data: dict, campus:str, unidad_academica: int, *modulo) -> str:
     """
-    This function returns a string, representing a url for a search query that can be used by 'scrape_courses_data'
+    This function returns a string, representing a url for a search query that can be used by 'scrape_buscacursos'
     """
     url = (url_data['url_components']['domain_request']
             + url_data['url_components']['semester'] + url_data['semestre_actual']
@@ -42,27 +45,38 @@ def assemble_url(url_data: dict, campus:str, unidad_academica: int, *modulo) -> 
     return url
 
 
-def build_urls_list(unidades_academicas:list, unidades_academicas_extensas:list, unidades_sin_datos:list, 
-                    url_data:dict, modulos:list, campus="San+Joaqu%C3%ADn") -> list:
+def build_urls_list(unidades_academicas:list, url_data:dict, campus="San+Joaqu%C3%ADn", restrictions={}) -> list:
     """
-    This function creates a list holding all the urls for search queries that can be used by 'scrape_courses_data', 
-    those representing an 'unidad academica' part of 'unidades_academicas_extensas' are split into multiple queries by their 'modulo'
+    This function creates a list holding all the urls for search queries that can be used by 'scrape_buscacursos'
     """
     urls_list = []
 
-    for unidad_academica in unidades_academicas:
+    if restrictions == {}:
 
-        if unidad_academica in unidades_sin_datos:
-            continue
-        
-        elif unidad_academica not in unidades_academicas_extensas:
+        for unidad_academica in unidades_academicas:
             urls_list.append(assemble_url(url_data, campus, unidad_academica))
 
-        else:
-            for modulo in modulos:
-                pass
+        return urls_list
+    
+    try:
+        unidades_academicas_extensas = restrictions['unidades_academicas_extensas']
+        unidades_academicas_sin_datos = restrictions['unidades_academicas_sin_datos']
+        modulos = restrictions['modulos']
 
-    return urls_list
+        for unidad_academica in unidades_academicas:
+
+            if unidad_academica in unidades_academicas_sin_datos:
+                continue
+
+            elif unidad_academica not in unidades_academicas_extensas:
+                urls_list.append(assemble_url(url_data, campus, unidad_academica))
+
+            else:
+                for modulo in modulos:
+                    urls_list.append(assemble_url(url_data, campus, unidad_academica, modulo))
+
+    except KeyError:
+        print("ERROR, restricciones incompletas")
 
 
 def extract_row_data(row) -> list:
@@ -82,16 +96,12 @@ def extract_row_data(row) -> list:
     return [Horario, Sala]
 
 
-def scrape_courses_data(url: str) -> pd.DataFrame:
+def scrape_courses_data(soup: BeautifulSoup) -> pd.DataFrame:
     """
-    This function recives a web url for the page 'https://buscacursos.uc.cl/' in the form of a string 
+    This function recives a BeautifulSoup object with the contents of a query for the page 'https://buscacursos.uc.cl/',
     and returns a DataFrame with all the 'Horarios' and 'Salas' listed
     """
     data = []
-    response = requests.get(url)
-    html_content = response.content
-
-    soup = BeautifulSoup(html_content, 'html.parser')
 
     page_frame = soup.find('table')
     even_rows = page_frame.find_all('tr', class_ = 'resultadosRowPar')
@@ -110,13 +120,48 @@ def scrape_courses_data(url: str) -> pd.DataFrame:
     return pd.DataFrame(data, columns = ['Horario', 'Sala'])
 
 
-def scrape_buscacursos(urls_list):
+def scrape_buscacursos(urls_list, url_components, modulos, recursive=False) -> pd.DataFrame:
     i = 0
     data_buscacursos = pd.DataFrame({'Horario': [], 'Salas': []})
+
     for url in urls_list:
-        data_buscacursos.append(scrape_courses_data(url))
-        print(f"Dataframe shape: {data_buscacursos.shape[0]}, Iteration: {i}")
-        i+=1
+
+        response = requests.get(url)
+        html_content = response.content
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        try:
+            check_site_warnings(soup)
+
+            data_buscacursos.append(scrape_courses_data(soup))
+
+        except e.ErrorBusquedaVacia:
+            if not recursive:
+                print(f'> Query ignorado, búsqueda vacía para {url}')
+                continue
+
+        except e.ErrorBusquedaMuyAmplia:
+            if recursive:
+                print(f'>> ERROR, busqueda recursiva sigue siendo muy amplia para {url}')
+                raise RecursionError
+            
+            print(f'> Query modificado, búsqueda muy amplia para {url}')
+            new_url_list = []
+            for modulo in modulo:
+                new_url = url - url_components['tail']
+                new_url += modulo + url_components['tail']
+                new_url_list.append(new_url)
+
+                result = scrape_buscacursos(new_url_list, url_components, modulos, recursive=True)
+                data_buscacursos.append(result)
+
+        finally:
+            if not recursive:
+                print(f"Dataframe shape: {data_buscacursos.shape[0]}, Iteration: {i}")
+                i += 1
+
+    return data_buscacursos
+
 
 
 # -------------------------------------------------------------------------------------------------
@@ -124,7 +169,7 @@ def scrape_buscacursos(urls_list):
 # Código:
 if __name__ == "__main__":
 
-    aaaa = {
+    url_data = {
             "semestre_actual": "2023-2",
             "url_components": {
                                 "domain_request":"https://buscacursos.uc.cl/?",
@@ -137,7 +182,7 @@ if __name__ == "__main__":
                                 "tail": "#resultados"
                                 }
         }
-    
+
     unidades_academicas_extensas = [
         "agronomia",
         "antropologia",
@@ -222,8 +267,12 @@ if __name__ == "__main__":
         "La búsqueda no produjo resultados.",
         "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 50 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados."
         ]
+    
+    modulos = []
 
-    #scrape_courses_data()
+    urls_list = build_urls_list(unidades_academicas, url_data)
+    scraped_data = scrape_buscacursos(urls_list, url_data['url_components'], modulos)
+    print(scraped_data)
 
 
 

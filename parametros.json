@@ -89,12 +89,73 @@
             "trabajo_social": 30,
             "villarica": 21
             },
+    
+        "unidades_academicas_por_codigo": {
+            "68": "actividades_filosofia",
+            "0": "actividades_universitarias",
+            "34": "actuacion",
+            "11": "agronomia",
+            "92": "antropologia",
+            "94": "arquitectura",
+            "33": "arte",
+            "2": "astrofisica",
+            "7": "bachillerato",
+            "52": "CARA",
+            "45": "ciencia_politica",
+            "12": "ciencias_biologicas",
+            "16": "ciencias_de_la_salud",
+            "9": "college",
+            "28": "comunicaciones",
+            "1": "construccion_civil",
+            "53": "deportes",
+            "17": "derecho",
+            "25": "desarrollo_sustentable",
+            "59": "diseno",
+            "5": "economia",
+            "20": "educacion",
+            "13": "enfermeria",
+            "19": "escuela_de_gobierno",
+            "40": "escuela_de_graduadoos",
+            "95": "estudios_urbanos",
+            "51": "estetica",
+            "67": "filosofia",
+            "3": "fisica",
+            "57": "geografia",
+            "56": "historia",
+            "23": "ing_mat",
+            "4": "ingenieria",
+            "18": "ing_bio_med",
+            "26": "eticas_aplicadas",
+            "64": "letras",
+            "6": "matematicas",
+            "14": "medicina",
+            "24": "veterniaria",
+            "70": "musica",
+            "15": "odontologia",
+            "29": "psicologia",
+            "10": "quimica",
+            "8": "farmacia",
+            "54": "requisito_idioma",
+            "91": "sociologia",
+            "38": "teologia",
+            "30": "trabajo_social",
+            "21": "villarica"
+        },
 
         "unidades_sin_datos": ["actividades_filosofia", "arquitectura", "bachillerato", "college", "deportes", "farmacia", "villarica"],
 
         "site_warnings": [
             "La búsqueda no produjo resultados.",
-            "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 50 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados."
+            "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 50 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados.",
+            "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 500 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados."
+            ],
+
+        "modulos": [
+            "L1=L1", "L2=L2", "L3=L3", "L4=L4", "L5=L5", "L6=L6", "L7=L7", "L8=L8", "L9=L9", 
+            "M1=M1", "M2=M2", "M3=M3", "M4=M4", "M5=M5", "M6=M6", "M7=M7", "M8=M8", "M9=M9", 
+            "W1=W1", "W2=W2", "W3=W3", "W4=W4", "W5=W5", "W6=W6", "W7=W7", "W8=W8", "W9=W9", 
+            "J1=J1", "J2=J2", "J3=J3", "J4=J4", "J5=J5", "J6=J6", "J7=J7", "J8=J8", "J9=J9", 
+            "V1=V1", "V2=V2", "V3=V3", "V4=V4", "V5=V5", "V6=V6", "V7=V7", "V8=V8", "V9=V9"
             ]
     },
 

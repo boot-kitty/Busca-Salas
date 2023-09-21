@@ -8,18 +8,35 @@ from bs4 import BeautifulSoup
 # -------------------------------------------------------------------------------------------------
 
 # Funciones:
+def find_academic_unit_code(url:str) -> str:
+    position_in_url = url.find('unidad_academica=') + 17
+    academic_unit_code_string = url[position_in_url: position_in_url+2]
+
+    try:
+        academic_unit_code = int(academic_unit_code_string)
+
+    except ValueError:
+        academic_unit_code = int(academic_unit_code_string[0])
+
+    return str(academic_unit_code)
+
+
 def check_site_warnings(soup:BeautifulSoup, site_warnings):
     try:
         warning_msg = soup.find('div', class_='bordeBonito').text.strip()
 
         if warning_msg == site_warnings[0]:
-            raise e.ErrorBusquedaVacia
+            return e.ErrorBusquedaVacia
         
         elif warning_msg == site_warnings[1]:
-            raise e.ErrorBusquedaMuyAmplia
+            return e.ErrorBusquedaMuyAmplia
+        
+        elif warning_msg == site_warnings[2]:
+            return e.ErrorBusquedaMuyAmplia
         
         # In case an undefined error pops up
         else:
+            print("WARNING INESPERADO!")
             print(warning_msg)
 
     except:
@@ -54,7 +71,7 @@ def build_urls_list(unidades_academicas:list, url_data:dict, campus="San+Joaqu%C
     if restrictions == {}:
 
         for unidad_academica in unidades_academicas:
-            urls_list.append(assemble_url(url_data, campus, unidad_academica))
+            urls_list.append(assemble_url(url_data, campus, unidades_academicas[unidad_academica]))
 
         return urls_list
     
@@ -108,56 +125,74 @@ def scrape_courses_data(soup: BeautifulSoup) -> pd.DataFrame:
     uneven_rows = page_frame.find_all('tr', class_ = 'resultadosRowImpar')
 
     for row in even_rows:
-        row_data = extract_row_data(row)
-        if (row_data[1] != 'SIN SALA'):
-            data.append(row_data)
+        try:
+            row_data = extract_row_data(row)
+            if (row_data[1] != 'SIN SALA'):
+                data.append(row_data)
+
+        except UnboundLocalError:
+            print('Actividad inválida, saltando fila')
 
     for row in uneven_rows:
-        row_data = extract_row_data(row)
-        if (row_data[1] != 'SIN SALA'):
-            data.append(row_data)
+        try:
+            row_data = extract_row_data(row)
+            if (row_data[1] != 'SIN SALA'):
+                data.append(row_data)
+                
+        except UnboundLocalError:
+            print('Actividad inválida, saltando fila')
 
     return pd.DataFrame(data, columns = ['Horario', 'Sala'])
 
 
-def scrape_buscacursos(urls_list, url_components, modulos, recursive=False) -> pd.DataFrame:
+def scrape_buscacursos(urls_list, url_data, unidades_academicas_por_codigo, site_warnings, modulos, recursive=False) -> pd.DataFrame:
     i = 0
-    data_buscacursos = pd.DataFrame({'Horario': [], 'Salas': []})
+    data_buscacursos = pd.DataFrame({'Horario': [], 'Sala': []})
 
     for url in urls_list:
+        if recursive:
+            print(f">> Recursive search | Iteration: {i+1}/45")
+            i += 1
 
         response = requests.get(url)
         html_content = response.content
         soup = BeautifulSoup(html_content, 'html.parser')
 
         try:
-            check_site_warnings(soup)
-
-            data_buscacursos.append(scrape_courses_data(soup))
+            query_error = check_site_warnings(soup, site_warnings)
+            if query_error != None:
+                raise query_error
+            
+            data_buscacursos = pd.concat([data_buscacursos, scrape_courses_data(soup)], ignore_index = True)
 
         except e.ErrorBusquedaVacia:
             if not recursive:
-                print(f'> Query ignorado, búsqueda vacía para {url}')
+                print(f'> Empty response | Query ignored | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}')
                 continue
 
         except e.ErrorBusquedaMuyAmplia:
             if recursive:
-                print(f'>> ERROR, busqueda recursiva sigue siendo muy amplia para {url}')
+                print(f'>> ERROR, recursive search limit exceeded for {url}')
                 raise RecursionError
             
-            print(f'> Query modificado, búsqueda muy amplia para {url}')
-            new_url_list = []
-            for modulo in modulo:
-                new_url = url - url_components['tail']
-                new_url += modulo + url_components['tail']
-                new_url_list.append(new_url)
+            else:
+                print(f'> Too many results | Query modified | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}')
 
-                result = scrape_buscacursos(new_url_list, url_components, modulos, recursive=True)
-                data_buscacursos.append(result)
+                new_url_list = []
+                url_components = url_data['url_components']
+
+                for modulo in modulos:
+                    new_url = url[:len(url)-len(url_components['tail'])]
+                    new_url += url_components['module'] + modulo + url_components['tail']
+                    new_url_list.append(new_url)
+
+                #print(new_url_list)
+                result = scrape_buscacursos(new_url_list, url_data, unidades_academicas_por_codigo, site_warnings, modulos, recursive=True)
+                data_buscacursos = pd.concat([data_buscacursos, result], ignore_index = True)
 
         finally:
             if not recursive:
-                print(f"Dataframe shape: {data_buscacursos.shape[0]}, Iteration: {i}")
+                print(f"Dataframe shape: {data_buscacursos.shape[0]} | Iteration: {i} | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}")
                 i += 1
 
     return data_buscacursos
@@ -260,18 +295,77 @@ if __name__ == "__main__":
         "trabajo_social": 30,
         "villarica": 21
         }
+    
+    unidades_academicas_por_codigo = {
+        "68": "actividades_filosofia",
+        "0": "actividades_universitarias",
+        "34": "actuacion",
+        "11": "agronomia",
+        "92": "antropologia",
+        "94": "arquitectura",
+        "33": "arte",
+        "2": "astrofisica",
+        "7": "bachillerato",
+        "52": "CARA",
+        "45": "ciencia_politica",
+        "12": "ciencias_biologicas",
+        "16": "ciencias_de_la_salud",
+        "9": "college",
+        "28": "comunicaciones",
+        "1": "construccion_civil",
+        "53": "deportes",
+        "17": "derecho",
+        "25": "desarrollo_sustentable",
+        "59": "diseno",
+        "5": "economia",
+        "20": "educacion",
+        "13": "enfermeria",
+        "19": "escuela_de_gobierno",
+        "40": "escuela_de_graduadoos",
+        "95": "estudios_urbanos",
+        "51": "estetica",
+        "67": "filosofia",
+        "3": "fisica",
+        "57": "geografia",
+        "56": "historia",
+        "23": "ing_mat",
+        "4": "ingenieria",
+        "18": "ing_bio_med",
+        "26": "eticas_aplicadas",
+        "64": "letras",
+        "6": "matematicas",
+        "14": "medicina",
+        "24": "veterniaria",
+        "70": "musica",
+        "15": "odontologia",
+        "29": "psicologia",
+        "10": "quimica",
+        "8": "farmacia",
+        "54": "requisito_idioma",
+        "91": "sociologia",
+        "38": "teologia",
+        "30": "trabajo_social",
+        "21": "villarica"
+    }
 
     unidades_sin_datos = ["actividades_filosofia", "arquitectura", "bachillerato", "college", "deportes", "farmacia", "villarica"]
 
     site_warnings = [
         "La búsqueda no produjo resultados.",
-        "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 50 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados."
+        "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 50 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados.",
+        "La búsqueda produjo demasiados resultados. Sólo se muestran los primeros 500 resultados.Por favor introduce más detalles en tus parámetros de búsqueda para ver más resultados."
         ]
     
-    modulos = []
+    modulos = [
+        'L1=L1', 'L2=L2', 'L3=L3', 'L4=L4', 'L5=L5', 'L6=L6', 'L7=L7', 'L8=L8', 'L9=L9', 
+        'M1=M1', 'M2=M2', 'M3=M3', 'M4=M4', 'M5=M5', 'M6=M6', 'M7=M7', 'M8=M8', 'M9=M9', 
+        'W1=W1', 'W2=W2', 'W3=W3', 'W4=W4', 'W5=W5', 'W6=W6', 'W7=W7', 'W8=W8', 'W9=W9', 
+        'J1=J1', 'J2=J2', 'J3=J3', 'J4=J4', 'J5=J5', 'J6=J6', 'J7=J7', 'J8=J8', 'J9=J9', 
+        'V1=V1', 'V2=V2', 'V3=V3', 'V4=V4', 'V5=V5', 'V6=V6', 'V7=V7', 'V8=V8', 'V9=V9'
+        ]
 
     urls_list = build_urls_list(unidades_academicas, url_data)
-    scraped_data = scrape_buscacursos(urls_list, url_data['url_components'], modulos)
+    scraped_data = scrape_buscacursos(urls_list, url_data, unidades_academicas_por_codigo, site_warnings, modulos)
     print(scraped_data)
 
 

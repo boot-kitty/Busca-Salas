@@ -167,42 +167,6 @@ def cargar_datos_salas() -> dict:
 if __name__ == "__main__":
     start_time = t.time()
     actualizar_datos_salas_con_webscrapper()
-    """
-    print(f'Generando una nueva base de datos')
-    urls_data = obtener_parametro('urls-data')
-
-    print("Generando urls")
-    urls_list = ws.build_urls_list(urls_data['unidades_academicas'], urls_data)
-
-    print("Añadiendo datos de buscacursos")
-    df = ws.scrape_buscacursos(urls_list, urls_data, urls_data['unidades_academicas_por_codigo'], 
-                                    urls_data['site_warnings'], urls_data['modulos'])
-
-    dir = os.path.join('datos', 'wow.bin')
-    with open(dir, "wb") as archivo_datos:
-        pickle.dump(df, archivo_datos)
-    """
-    """
-    dir = os.path.join('datos', 'wow.bin')
-    with open(dir, "rb") as archivo_datos:
-        df = pickle.load(archivo_datos)
-
-    df_limpio = df.drop_duplicates()
-    dfff = df.dropna()
-    print(df_limpio.shape[0], df.shape[0], dfff.shape[0])
-
-    df_salas_unicas = dfff['Sala'].drop_duplicates()
-
-    print("Generando objetos 'Sala'")
-    dict_salas = generar_salas(df_salas_unicas)
-
-    print("Actualizando horarios de Salas")
-    actualizar_horarios_diccionario_salas(dfff, dict_salas)
-    directorio_salas = os.path.join(*obtener_parametro("paths", "directorio_salas"))
-    
-    print(f"Guardando datos en '{directorio_salas}'")
-    guardar_datos_salas(dict_salas)
-    """
 
     """
     descomentar si se quiere utilizar un documento de excel de forma local

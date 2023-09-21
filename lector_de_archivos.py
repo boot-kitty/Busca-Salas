@@ -8,6 +8,7 @@ import time as t
 
 # Imports Propios:
 import salas as s
+import web_scrapper as ws
 # -------------------------------------------------------------------------------------------------
 
 # Funciones:
@@ -102,22 +103,52 @@ def guardar_datos_salas(dict_salas: dict):
         pickle.dump(dict_salas, archivo_datos)
 
 
-def actualizar_datos_salas():
+def actualizar_datos_salas_con_datos_locales():
     """
     Esta función se encarga de actualizar la información guardada en el archivo salas_sj.bin,
     para que corresponda a la guardada en la imagen de buscacursos seleccionada
     """
-    df = generar_dataframe()
     print("\nGenerando una nueva base de datos")
+    df = generar_dataframe()
     df_limpio = limpiar_dataframe(df)
     df_salas_unicas = df_limpio['Sala'].drop_duplicates()
+
     print("Eliminando duplicados y entradas 'SIN SALA'")
     dict_salas = generar_salas(df_salas_unicas)
+
     print("Actualizando horarios")
     actualizar_horarios_diccionario_salas(df_limpio, dict_salas)
     directorio_salas = os.path.join(*obtener_parametro("paths", "directorio_salas"))
+    
     print(f"Guardando datos en '{directorio_salas}'\n")
     guardar_datos_salas(dict_salas)
+
+
+def actualizar_datos_salas_con_webscrapper():
+    print("\nGenerando una nueva base de datos")
+    urls_data = obtener_parametro('urls-data')
+
+    print("Generando urls")
+    urls_list = ws.build_urls_list(urls_data['unidades_academicas'], urls_data)
+
+    print("Añadiendo datos de buscacursos")
+    df = ws.scrape_buscacursos(urls_list, urls_data, urls_data['unidades_academicas_por_codigo'], 
+                                       urls_data['site_warnings'], urls_data['modulos'])
+    
+    print("Limpiando DataFrame")
+    df_limpio = df.dropna()
+    df_salas_unicas = df_limpio['Sala'].drop_duplicates()
+
+    print("Generando objetos 'Sala'")
+    dict_salas = generar_salas(df_salas_unicas)
+
+    print("Actualizando horarios de Salas")
+    actualizar_horarios_diccionario_salas(df_limpio, dict_salas)
+    directorio_salas = os.path.join(*obtener_parametro("paths", "directorio_salas"))
+    
+    print(f"Guardando datos en '{directorio_salas}'\n")
+    guardar_datos_salas(dict_salas)
+    print("Guardado exitoso!")
 
 
 def cargar_datos_salas() -> dict:
@@ -135,5 +166,47 @@ def cargar_datos_salas() -> dict:
 # Código:
 if __name__ == "__main__":
     start_time = t.time()
+    actualizar_datos_salas_con_webscrapper()
+    """
+    print(f'Generando una nueva base de datos')
+    urls_data = obtener_parametro('urls-data')
+
+    print("Generando urls")
+    urls_list = ws.build_urls_list(urls_data['unidades_academicas'], urls_data)
+
+    print("Añadiendo datos de buscacursos")
+    df = ws.scrape_buscacursos(urls_list, urls_data, urls_data['unidades_academicas_por_codigo'], 
+                                    urls_data['site_warnings'], urls_data['modulos'])
+
+    dir = os.path.join('datos', 'wow.bin')
+    with open(dir, "wb") as archivo_datos:
+        pickle.dump(df, archivo_datos)
+    """
+    """
+    dir = os.path.join('datos', 'wow.bin')
+    with open(dir, "rb") as archivo_datos:
+        df = pickle.load(archivo_datos)
+
+    df_limpio = df.drop_duplicates()
+    dfff = df.dropna()
+    print(df_limpio.shape[0], df.shape[0], dfff.shape[0])
+
+    df_salas_unicas = dfff['Sala'].drop_duplicates()
+
+    print("Generando objetos 'Sala'")
+    dict_salas = generar_salas(df_salas_unicas)
+
+    print("Actualizando horarios de Salas")
+    actualizar_horarios_diccionario_salas(dfff, dict_salas)
+    directorio_salas = os.path.join(*obtener_parametro("paths", "directorio_salas"))
+    
+    print(f"Guardando datos en '{directorio_salas}'")
+    guardar_datos_salas(dict_salas)
+    """
+
+    """
+    descomentar si se quiere utilizar un documento de excel de forma local
     actualizar_datos_salas()
+    """
+    
     print("--- %s seconds ---" % (t.time() - start_time))

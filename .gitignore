@@ -2,3 +2,5 @@
 /datos/*~lock**
 *png
 /misc
+/datos/wow.bin
+/datos/local_test.txt

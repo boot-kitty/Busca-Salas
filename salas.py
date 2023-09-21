@@ -17,6 +17,13 @@ class Sala:
         Modifica las entradas del diccionario 'horarios', 
         cambiando a 'False' aquellos bloques en los que la sala se encuentra reservada
         """
-        for dia in tp_dia_bloque[0]:
-            for bloque in tp_dia_bloque[1]:
-                self.horarios[dia][(int(bloque) - 1)] = False
+        try:
+            for dia in tp_dia_bloque[0]:
+                for bloque in tp_dia_bloque[1]:
+                    self.horarios[dia][(int(bloque) - 1)] = False
+        
+        except KeyError:
+            print(f"Tupla omitida: {tp_dia_bloque} en {self.nombre}")
+
+        except  ValueError:
+            print(f"Tupla omitida: {tp_dia_bloque} en {self.nombre}")

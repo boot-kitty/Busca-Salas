@@ -1,11 +1,11 @@
 # Imports Externos:
 import datetime as dt
 import time as t
-import salas as s
-import errores_y_excepciones as e
 
 # Imports Propios:
 import lector_de_archivos as l
+import salas as s
+import errores_y_excepciones as e
 
 # -------------------------------------------------------------------------------------------------
 
@@ -127,12 +127,15 @@ if __name__ == "__main__":
     start_time = t.time()
     selector = Selector()
 
-    tupla_busqueda = [("J", 5), ("J", 6)]
+    print(selector.dict_salas['BC22'].horarios)
+
+    """
+    tupla_busqueda = [("M", 3)]
     selector.buscar_salas(tupla_busqueda)
-    
+
     print("\n" + "--- %s seconds ---" % (t.time() - start_time))
-    a = input()
-    
+    """
+
     # !!!
     # M módulo 4 AP está ocupada y listada como disponible
     # !!!

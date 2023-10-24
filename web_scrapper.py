@@ -131,7 +131,7 @@ def scrape_courses_data(soup: BeautifulSoup) -> pd.DataFrame:
                 data.append(row_data)
 
         except UnboundLocalError:
-            print('Actividad inválida, saltando fila')
+            print('>> Actividad inválida, saltando fila')
 
     for row in uneven_rows:
         try:
@@ -150,9 +150,6 @@ def scrape_buscacursos(urls_list, url_data, unidades_academicas_por_codigo, site
     data_buscacursos = pd.DataFrame({'Horario': [], 'Sala': []})
 
     for url in urls_list:
-        if recursive:
-            print(f">> Recursive search | Iteration: {i+1}/45")
-            i += 1
 
         response = requests.get(url)
         html_content = response.content
@@ -163,12 +160,17 @@ def scrape_buscacursos(urls_list, url_data, unidades_academicas_por_codigo, site
             if query_error != None:
                 raise query_error
             
+            old_length = data_buscacursos.shape[0]
             data_buscacursos = pd.concat([data_buscacursos, scrape_courses_data(soup)], ignore_index = True)
+            outcome = f'added {data_buscacursos.shape[0] - old_length} data entries'
 
         except e.ErrorBusquedaVacia:
             if not recursive:
-                print(f'> Empty response | Query ignored | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}')
+                print(f'> Empty response, query ignored | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}')
                 continue
+            else:
+                outcome = 'Empty response,  query ignored'
+
 
         except e.ErrorBusquedaMuyAmplia:
             if recursive:
@@ -193,7 +195,11 @@ def scrape_buscacursos(urls_list, url_data, unidades_academicas_por_codigo, site
         finally:
             if not recursive:
                 print(f"Dataframe shape: {data_buscacursos.shape[0]} | Iteration: {i} | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}")
-                i += 1
+
+            else:
+                print(f">> Recursive search | Iteration: {i+1}/45 | Outcome: {outcome}")
+
+            i += 1
 
     return data_buscacursos
 
@@ -364,10 +370,16 @@ if __name__ == "__main__":
         'V1=V1', 'V2=V2', 'V3=V3', 'V4=V4', 'V5=V5', 'V6=V6', 'V7=V7', 'V8=V8', 'V9=V9'
         ]
 
+    """
     urls_list = build_urls_list(unidades_academicas, url_data)
     scraped_data = scrape_buscacursos(urls_list, url_data, unidades_academicas_por_codigo, site_warnings, modulos)
     print(scraped_data)
-
+    """
+    """
+    test_url = "https://buscacursos.uc.cl/?cxml_semestre=2023-2&cxml_sigla=&cxml_nrc=&cxml_nombre=&cxml_categoria=TODOS&cxml_area_fg=TODOS&cxml_formato_cur=TODOS&cxml_profesor=&cxml_campus=San+Joaqu%C3%ADn&cxml_unidad_academica=11&cxml_horario_tipo_busqueda=si_tenga&cxml_horario_tipo_busqueda_actividad=TODOS#resultados"
+  
+    print(check_site_warnings(test_url, site_warnings))
+    """
 
 
 """

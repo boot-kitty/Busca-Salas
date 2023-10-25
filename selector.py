@@ -127,23 +127,7 @@ if __name__ == "__main__":
     start_time = t.time()
     selector = Selector()
 
-    print(selector.dict_salas['BC22'].horarios)
-
-    """
     tupla_busqueda = [("M", 3)]
     selector.buscar_salas(tupla_busqueda)
 
-    print("\n" + "--- %s seconds ---" % (t.time() - start_time))
-    """
-
-    # !!!
-    # M módulo 4 AP está ocupada y listada como disponible
-    # !!!
-
-    #J módulo 3 no hay AP 
-    # WhatsApp -> 33 caracteres monoespaciados  
-
-    # Formato Propio ((15, 15), (20, 17), 58)
-    # formato seba ((10, 10), (13, 14), 48)
-    
-    
+    print("\n" + "--- %s seconds ---" % (t.time() - start_time))    

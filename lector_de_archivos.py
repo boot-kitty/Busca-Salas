@@ -132,7 +132,7 @@ def actualizar_datos_salas_con_webscrapper():
     urls_list = ws.build_urls_list(urls_data['unidades_academicas'], urls_data)
 
     print("Añadiendo datos de buscacursos")
-    df = ws.scrape_buscacursos(urls_list, urls_data, urls_data['unidades_academicas_por_codigo'], 
+    df = ws.run_webscrapper(urls_list, urls_data, urls_data['unidades_academicas_por_codigo'], 
                                        urls_data['site_warnings'], urls_data['modulos'])
     
     print("Limpiando DataFrame")

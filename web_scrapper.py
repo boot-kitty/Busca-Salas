@@ -56,7 +56,6 @@ def assemble_url(url_data: dict, campus:str, unidad_academica: int, modulo='') -
             )
 
     if modulo != '':
-        print('llamando a módulo:', modulo)
         url += (url_data['url_components']['module'] + modulo)
 
     url += url_data['url_components']['tail']
@@ -105,13 +104,15 @@ def extract_row_data(row) -> list:
     columns = row.find_all('td')
     schedule_table = columns[16].find('table')
     course_activities = schedule_table.find_all('tr')
+    class_activity_pairs = []
 
     for activity in course_activities:
         components = activity.find_all('td')
         Horario = components[0].text.strip()
         Sala = components[2].text.strip()
+        class_activity_pairs.append((Horario, Sala))
 
-    return [Horario, Sala]
+    return class_activity_pairs
 
 
 def scrape_data(soup: BeautifulSoup) -> pd.DataFrame:
@@ -128,8 +129,9 @@ def scrape_data(soup: BeautifulSoup) -> pd.DataFrame:
     for row in even_rows:
         try:
             row_data = extract_row_data(row)
-            if (row_data[1] != 'SIN SALA'):
-                data.append(row_data)
+            for class_activity_pair in row_data:
+                if (class_activity_pair[1] != 'SIN SALA'):
+                    data.append(class_activity_pair)
 
         except UnboundLocalError:
             print('>> Actividad inválida, saltando fila')
@@ -137,8 +139,9 @@ def scrape_data(soup: BeautifulSoup) -> pd.DataFrame:
     for row in uneven_rows:
         try:
             row_data = extract_row_data(row)
-            if (row_data[1] != 'SIN SALA'):
-                data.append(row_data)
+            for class_activity_pair in row_data:
+                if (class_activity_pair[1] != 'SIN SALA'):
+                    data.append(class_activity_pair)
                 
         except UnboundLocalError:
             print('Actividad inválida, saltando fila')

@@ -1,9 +1,9 @@
+# Auto generated files:
 /__pycache__
 /datos/*~lock**
-*png
+
+# Miscellaneous data:
 /misc
-/datos/wow.bin
-/datos/local_test.txt
-/DebugLog.txt
-/testing_environment.py
-/test_variables.py
+
+# Testing data:
+/testing

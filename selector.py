@@ -5,7 +5,6 @@ import time as t
 # Imports Propios:
 import lector_de_archivos as l
 import salas as s
-import errores_y_excepciones as e
 
 # -------------------------------------------------------------------------------------------------
 

@@ -161,6 +161,10 @@ def cargar_datos_salas() -> dict:
         dict_salas = pickle.load(archivo_datos)
     return dict_salas
 
+
+def guardar_datos_salas_en_json():
+    pass
+
 # -------------------------------------------------------------------------------------------------
 
 # Código:

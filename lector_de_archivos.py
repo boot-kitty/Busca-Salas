@@ -94,17 +94,35 @@ def actualizar_horarios_diccionario_salas(df: pd.DataFrame, dict_salas: dict):
         dict_salas[nombre_sala].actualizar_horarios(bloques_ocupados)
 
 
-def guardar_datos_salas(dict_salas: dict):
+def guardar_datos_salas_binary(dict_salas: dict):
     """
-    Esta función guarda el diccionario conteniendo las instancias 'Sala' del campus SJ con sus respectivos horarios
+    Esta función guarda el diccionario conteniendo las instancias 'Sala' del campus SJ con sus respectivos horarios en un archivo binario
     """
-    directorio_datos_salas = os.path.join(*obtener_parametro("paths", "directorio_salas"))
+    directorio_datos_salas = os.path.join(*obtener_parametro("paths", "directorio_salas_bin"))
     with open(directorio_datos_salas, "wb") as archivo_datos:
         pickle.dump(dict_salas, archivo_datos)
 
 
+def guardar_datos_salas_json(datos_salas):
+    """
+    Esta función guarda el diccionario conteniendo las instancias 'Sala' del campus SJ con sus respectivos horarios en un archivo json
+    """
+    array_salas = []
+
+    for sala in datos_salas:
+        array_salas.append({
+            "nombre": datos_salas[sala].nombre,
+            "horarios": datos_salas[sala].horarios
+            })
+        
+    directorio_datos_salas = os.path.join(*obtener_parametro("paths", "directorio_salas_json"))
+    with open(directorio_datos_salas, "w") as archivo_datos:
+        json.dump(array_salas, archivo_datos)
+
+
 def actualizar_datos_salas_con_datos_locales():
     """
+    [DEPRECATED]
     Esta función se encarga de actualizar la información guardada en el archivo salas_sj.bin,
     para que corresponda a la guardada en la imagen de buscacursos seleccionada
     """
@@ -118,10 +136,10 @@ def actualizar_datos_salas_con_datos_locales():
 
     print("Actualizando horarios")
     actualizar_horarios_diccionario_salas(df_limpio, dict_salas)
-    directorio_salas = os.path.join(*obtener_parametro("paths", "directorio_salas"))
+    directorio_datos_salas_bin = os.path.join(*obtener_parametro("paths", "directorio_salas_bin"))
     
-    print(f"Guardando datos en '{directorio_salas}'\n")
-    guardar_datos_salas(dict_salas)
+    print(f"Guardando datos en '{directorio_datos_salas_bin}'\n")
+    guardar_datos_salas_binary(dict_salas)
 
 
 def actualizar_datos_salas_con_webscrapper():
@@ -144,11 +162,17 @@ def actualizar_datos_salas_con_webscrapper():
 
     print("Actualizando horarios de Salas")
     actualizar_horarios_diccionario_salas(df_limpio, dict_salas)
-    directorio_salas = os.path.join(*obtener_parametro("paths", "directorio_salas"))
+    directorio_datos_salas_bin = os.path.join(*obtener_parametro("paths", "directorio_salas_bin"))
     
-    print(f"Guardando datos en '{directorio_salas}'\n")
-    guardar_datos_salas(dict_salas)
+    print(f"Guardando datos en '{directorio_datos_salas_bin}'")
+    guardar_datos_salas_binary(dict_salas)
     print("Guardado exitoso!")
+
+    directorio_datos_salas_json = os.path.join(*obtener_parametro("paths", "directorio_salas_json"))
+    print(f"Guardando datos en '{directorio_datos_salas_json}'")
+    guardar_datos_salas_json(dict_salas)
+    print("Guardado exitoso!")
+
 
 
 def cargar_datos_salas() -> dict:
@@ -156,20 +180,18 @@ def cargar_datos_salas() -> dict:
     Esta función see encarga de leer el archivo indicado en el parámetro 'directorio_datos_salas',
     y retorna un diccionario con los datos de todas las salas del campus
     """
-    directorio_datos_salas = os.path.join(*obtener_parametro("paths", "directorio_salas"))
+    directorio_datos_salas = os.path.join(*obtener_parametro("paths", "directorio_salas_bin"))
     with open(directorio_datos_salas, "rb") as archivo_datos:
         dict_salas = pickle.load(archivo_datos)
     return dict_salas
 
-
-def guardar_datos_salas_en_json():
-    pass
 
 # -------------------------------------------------------------------------------------------------
 
 # Código:
 if __name__ == "__main__":
     start_time = t.time()
+
     actualizar_datos_salas_con_webscrapper()
 
     """

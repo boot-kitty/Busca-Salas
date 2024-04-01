@@ -94,6 +94,26 @@ def actualizar_horarios_diccionario_salas(df: pd.DataFrame, dict_salas: dict):
         dict_salas[nombre_sala].actualizar_horarios(bloques_ocupados)
 
 
+def reescribir_modulos_libres(disponibilidad_dia: list):
+    disponibilidad_dia_bonita = []
+    for indice_modulo in range(0, len(disponibilidad_dia)):
+        if disponibilidad_dia[indice_modulo]:
+            disponibilidad_dia_bonita.append(indice_modulo + 1)
+    return disponibilidad_dia_bonita
+
+
+def reescribir_horarios_sala(horarios: dict):
+    horarios_bonitos = {
+        "L": reescribir_modulos_libres(horarios["L"]),
+        "M": reescribir_modulos_libres(horarios["M"]),
+        "W": reescribir_modulos_libres(horarios["W"]),
+        "J": reescribir_modulos_libres(horarios["J"]),
+        "V": reescribir_modulos_libres(horarios["V"]),
+        "S": reescribir_modulos_libres(horarios["S"])
+        }
+    return horarios_bonitos
+
+
 def guardar_datos_salas_binary(dict_salas: dict):
     """
     Esta función guarda el diccionario conteniendo las instancias 'Sala' del campus SJ con sus respectivos horarios en un archivo binario
@@ -103,7 +123,7 @@ def guardar_datos_salas_binary(dict_salas: dict):
         pickle.dump(dict_salas, archivo_datos)
 
 
-def guardar_datos_salas_json(datos_salas):
+def guardar_datos_salas_json(datos_salas: dict):
     """
     Esta función guarda el diccionario conteniendo las instancias 'Sala' del campus SJ con sus respectivos horarios en un archivo json
     """
@@ -112,12 +132,13 @@ def guardar_datos_salas_json(datos_salas):
     for sala in datos_salas:
         array_salas.append({
             "nombre": datos_salas[sala].nombre,
-            "horarios": datos_salas[sala].horarios
+            "horarios": reescribir_horarios_sala(datos_salas[sala].horarios)
             })
         
     directorio_datos_salas = os.path.join(*obtener_parametro("paths", "directorio_salas_json"))
     with open(directorio_datos_salas, "w") as archivo_datos:
         json.dump(array_salas, archivo_datos)
+
 
 
 def actualizar_datos_salas_con_datos_locales():
@@ -193,10 +214,5 @@ if __name__ == "__main__":
     start_time = t.time()
 
     actualizar_datos_salas_con_webscrapper()
-
-    """
-    descomentar si se quiere utilizar un documento de excel de forma local
-    actualizar_datos_salas()
-    """
     
     print("--- %s seconds ---" % (t.time() - start_time))

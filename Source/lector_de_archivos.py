@@ -27,7 +27,7 @@ def obtener_parametro(key_del_diccionario, *args):
     llamamos a la función: obtener_parametro('paths', None).
     """
 
-    path = os.path.join("", "parametros.json")
+    path = os.path.join("", "Source", "parametros.json")
     
     with open(path, "r", encoding = "utf-8") as archivo:
         diccionario_parametros = json.load(archivo)

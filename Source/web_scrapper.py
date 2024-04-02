@@ -1,10 +1,10 @@
-# Imports Propios:
-import errores_y_excepciones as e
-
 # Imports Externos:
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
+
+# Imports Propios:
+import errores_y_excepciones as e
 # -------------------------------------------------------------------------------------------------
 
 # Funciones:

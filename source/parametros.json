@@ -160,9 +160,9 @@
     },
 
     "paths": {
-        "directorio_excel": ["Database", "imagen_buscacursos_2023-1.xlsx"],
-        "directorio_salas_bin": ["Database", "salas_sj.bin"],
-        "directorio_salas_json": ["Database", "salas_sj.json"]
+        "directorio_excel": ["database", "imagen_buscacursos_2023-1.xlsx"],
+        "directorio_salas_bin": ["database", "salas_sj.bin"],
+        "directorio_salas_json": ["database", "salas_sj.json"]
 
     },
 

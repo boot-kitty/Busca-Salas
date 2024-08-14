@@ -9,6 +9,7 @@ import time as t
 # Imports Propios:
 import salas as s
 import web_scrapper as ws
+import interfaz_consola as c
 # -------------------------------------------------------------------------------------------------
 
 # Funciones:
@@ -41,16 +42,6 @@ def obtener_parametro(key_del_diccionario, *args):
     # diccionario completo
     except IndexError:
         return diccionario_selecionado
-
-
-def generar_dataframe():
-    """
-    Esta función se encarga de generar un dataframe de Pandas utilizando el directorio de un 
-    archivo .xlsx entregado en parametros.py
-    """
-    excel_file = os.path.join(*obtener_parametro("paths", "directorio_excel"))
-    df = pd.read_excel(excel_file, usecols = ['Horario', 'Sala'])
-    return df
 
 
 def limpiar_dataframe(df: pd.DataFrame):
@@ -140,29 +131,6 @@ def guardar_datos_salas_json(datos_salas: dict):
         json.dump(array_salas, archivo_datos)
 
 
-
-def actualizar_datos_salas_con_datos_locales():
-    """
-    [DEPRECATED]
-    Esta función se encarga de actualizar la información guardada en el archivo salas_sj.bin,
-    para que corresponda a la guardada en la imagen de buscacursos seleccionada
-    """
-    print("\nGenerando una nueva base de datos")
-    df = generar_dataframe()
-    df_limpio = limpiar_dataframe(df)
-    df_salas_unicas = df_limpio['Sala'].drop_duplicates()
-
-    print("Eliminando duplicados y entradas 'SIN SALA'")
-    dict_salas = generar_salas(df_salas_unicas)
-
-    print("Actualizando horarios")
-    actualizar_horarios_diccionario_salas(df_limpio, dict_salas)
-    directorio_datos_salas_bin = os.path.join(*obtener_parametro("paths", "directorio_salas_bin"))
-    
-    print(f"Guardando datos en '{directorio_datos_salas_bin}'\n")
-    guardar_datos_salas_binary(dict_salas)
-
-
 def actualizar_datos_salas_con_webscrapper():
     print("\nGenerando una nueva base de datos")
     urls_data = obtener_parametro('urls-data')
@@ -187,12 +155,12 @@ def actualizar_datos_salas_con_webscrapper():
     
     print(f"Guardando datos en '{directorio_datos_salas_bin}'")
     guardar_datos_salas_binary(dict_salas)
-    print("Guardado exitoso!")
+    c.console_log("Guardado exitoso!", "success")
 
     directorio_datos_salas_json = os.path.join(*obtener_parametro("paths", "directorio_salas_json"))
     print(f"Guardando datos en '{directorio_datos_salas_json}'")
     guardar_datos_salas_json(dict_salas)
-    print("Guardado exitoso!")
+    c.console_log("Guardado exitoso!", "success")
 
 
 

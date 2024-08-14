@@ -126,8 +126,7 @@ if __name__ == "__main__":
     start_time = t.time()
     selector = Selector()
 
-    print("\nuwu")
-    tupla_busqueda = [("L", 2)]
+    tupla_busqueda = [("W", 3)]
     selector.buscar_salas(tupla_busqueda)
-
+    
     print("\n" + "--- %s seconds ---" % (t.time() - start_time))

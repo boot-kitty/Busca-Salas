@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 
 # Imports Propios:
 import errores_y_excepciones as e
+import interfaz_consola as c
 # -------------------------------------------------------------------------------------------------
 
 # Funciones:
@@ -36,7 +37,7 @@ def check_site_warnings(soup:BeautifulSoup, site_warnings):
         
         # In case an undefined error pops up
         else:
-            print("WARNING INESPERADO!")
+            c.console_log("WARNING INESPERADO!", "error")
             print(warning_msg)
 
     except:
@@ -93,7 +94,7 @@ def build_urls_list(unidades_academicas:list, url_data:dict, campus="San+Joaqu%C
                     urls_list.append(assemble_url(url_data, campus, unidad_academica, modulo))
 
     except KeyError:
-        print("ERROR, restricciones incompletas")
+        c.console_log("ERROR, restricciones incompletas", "error")
 
 
 def extract_row_data(row) -> list:
@@ -122,9 +123,9 @@ def scrape_data(soup: BeautifulSoup) -> pd.DataFrame:
     """
     data = []
 
-    page_frame = soup.find('table')
-    even_rows = page_frame.find_all('tr', class_ = 'resultadosRowPar')
-    uneven_rows = page_frame.find_all('tr', class_ = 'resultadosRowImpar')
+    even_rows = soup.find_all('tr', class_='resultadosRowPar')
+
+    uneven_rows = soup.find_all('tr', class_='resultadosRowImpar')
 
     for row in even_rows:
         try:
@@ -134,7 +135,7 @@ def scrape_data(soup: BeautifulSoup) -> pd.DataFrame:
                     data.append(class_activity_pair)
 
         except UnboundLocalError:
-            print('>> Actividad inválida, saltando fila')
+            c.console_log('>> Actividad inválida, saltando fila', "warning")
 
     for row in uneven_rows:
         try:
@@ -144,7 +145,7 @@ def scrape_data(soup: BeautifulSoup) -> pd.DataFrame:
                     data.append(class_activity_pair)
                 
         except UnboundLocalError:
-            print('Actividad inválida, saltando fila')
+            c.console_log('Actividad inválida, saltando fila', "warning")
 
     return pd.DataFrame(data, columns = ['Horario', 'Sala'])
 
@@ -170,19 +171,19 @@ def run_webscrapper(urls_list, url_data, unidades_academicas_por_codigo, site_wa
 
         except e.ErrorBusquedaVacia:
             if not recursive:
-                print(f'> Empty response, query ignored | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}')
+                c.console_log(f'> Empty response, query ignored | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}', "warning")
                 continue
             else:
-                outcome = 'Empty response,  query ignored'
+                c.console_log('>> Empty response,  query ignored', "warning")
 
 
         except e.ErrorBusquedaMuyAmplia:
             if recursive:
-                print(f'>> ERROR, recursive search limit exceeded for {url}')
+                c.console_log(f'>> ERROR, recursive search limit exceeded for {url}', "error")
                 raise RecursionError
             
             else:
-                print(f'> Too many results | Query modified | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}')
+                c.console_log(f'> Too many results | Query modified | UA: {unidades_academicas_por_codigo[find_academic_unit_code(url)]}', "warning")
 
                 new_url_list = []
                 url_components = url_data['url_components']
@@ -192,7 +193,6 @@ def run_webscrapper(urls_list, url_data, unidades_academicas_por_codigo, site_wa
                     new_url += url_components['module'] + modulo + url_components['tail']
                     new_url_list.append(new_url)
 
-                #print(new_url_list)
                 result = run_webscrapper(new_url_list, url_data, unidades_academicas_por_codigo, site_warnings, modulos, recursive=True)
                 data_buscacursos = pd.concat([data_buscacursos, result], ignore_index = True)
 
@@ -218,8 +218,7 @@ if __name__ == "__main__":
     urls_list = build_urls_list(unidades_academicas, url_data)
     scraped_data = run_webscrapper(urls_list, url_data, unidades_academicas_por_codigo, site_warnings, modulos)
     print(scraped_data)
-    """
-    """
+
     test_url = "https://buscacursos.uc.cl/?cxml_semestre=2023-2&cxml_sigla=&cxml_nrc=&cxml_nombre=&cxml_categoria=TODOS&cxml_area_fg=TODOS&cxml_formato_cur=TODOS&cxml_profesor=&cxml_campus=San+Joaqu%C3%ADn&cxml_unidad_academica=11&cxml_horario_tipo_busqueda=si_tenga&cxml_horario_tipo_busqueda_actividad=TODOS#resultados"
   
     print(check_site_warnings(test_url, site_warnings))
@@ -227,7 +226,7 @@ if __name__ == "__main__":
 
 
 """
-test_url = "https://buscacursos.uc.cl/?cxml_semestre=2023-2&cxml_sigla=&cxml_nrc=&cxml_nombre=&cxml_categoria=TODOS&cxml_area_fg=TODOS&cxml_formato_cur=TODOS&cxml_profesor=&cxml_campus=San+Joaqu%C3%ADn&cxml_unidad_academica=11&cxml_horario_tipo_busqueda=si_tenga&cxml_horario_tipo_busqueda_actividad=TODOS#resultados"
+test_url = "https://buscacursos.uc.cl/?cxml_semestre=2024-1&cxml_sigla=&cxml_nrc=&cxml_nombre=&cxml_categoria=TODOS&cxml_area_fg=TODOS&cxml_formato_cur=TODOS&cxml_profesor=&cxml_campus=San+Joaqu%C3%ADn&cxml_unidad_academica=0&cxml_horario_tipo_busqueda=si_tenga&cxml_horario_tipo_busqueda_actividad=TODOS#resultados"
   
 print(check_site_warnings(test_url, site_warnings))
     #test_url_data_indexation(unidades_academicas, unidades_academicas_extensas, unidades_sin_datos, aaaa)

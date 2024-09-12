@@ -85,23 +85,39 @@ class Selector:
     def mostrar_resultados_busqueda(self, lista_de_busqueda: list, interseccion_resultados: dict, union_resultados: list):
 
         if interseccion_resultados is not None:
+
             print(f"Resultados de Búsqueda para: {lista_de_busqueda}\n\n"
-                + "-"*15 + " Resultados Intersección " + "-"*15,
-                "\n", *interseccion_resultados.keys(),
-                "\n\n" + "-"*20 + " Resultados Unión " + "-"*17
-                )
+                + "-"*15 + " Resultados Intersección " + "-"*15)
             
+            interseccion_ordenada = ordernar_diccionario(interseccion_resultados)
+
+            for key_sala in interseccion_ordenada.keys():
+                if key_sala != "":
+                    print(f"{key_sala}; ", end="")
+
+            print("\n\n" + "-"*20 + " Resultados Unión " + "-"*17)
+
             for resultado in union_resultados:
                 resultado = ordernar_diccionario(resultado)
-                print(*resultado.keys(),
-                      "\n" + "-"*58)
+
+                for key_sala in resultado.keys():
+                    if key_sala != "":
+                        print(f"{key_sala}; ", end="")
+                
+                print("\n" + "-"*58)
+
 
         else:
             resultado = ordernar_diccionario(union_resultados[0])
+
             print(f"Resultados de Búsqueda para: {lista_de_busqueda}\n\n"
-                    + "-"*14 + " Resultados Búsqueda Única " + "-"*14 + "\n",
-                    *resultado.keys(),
-                    "\n" + "-"*58)
+                    + "-"*14 + " Resultados Búsqueda Única " + "-"*14)
+            
+            for key_sala in resultado.keys():
+                if key_sala != "":
+                    print(f"{key_sala}; ", end="")
+
+            print("-"*58)
 
 
     def buscar_salas(self, lista_de_busqueda: list):
@@ -110,7 +126,7 @@ class Selector:
         for request in lista_de_busqueda:
             resultados_request = encontrar_sala_desocupada(self.dict_salas, request)
             union_resultados.append(resultados_request)
-        
+
         if len(lista_de_busqueda) > 1:
             interseccion_resultados = ordernar_diccionario(self.encontrar_interseccion_horarios(lista_de_busqueda))
             self.mostrar_resultados_busqueda(lista_de_busqueda, interseccion_resultados, union_resultados)
@@ -126,7 +142,7 @@ if __name__ == "__main__":
     start_time = t.time()
     selector = Selector()
 
-    tupla_busqueda = [("W", 3)]
+    tupla_busqueda = [("J", 2), ("J", 3)]
     selector.buscar_salas(tupla_busqueda)
     
     print("\n" + "--- %s seconds ---" % (t.time() - start_time))

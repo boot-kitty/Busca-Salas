@@ -1,0 +1,14 @@
+{
+    "python.pythonPath": "path/to/python",
+    "python.envFile": "${workspaceFolder}/.env",
+    "terminal.integrated.env.windows": {
+      "PYTHONPATH": "${workspaceFolder}/source"
+    },
+    "terminal.integrated.env.linux": {
+      "PYTHONPATH": "${workspaceFolder}/source"
+    },
+    "python.analysis.extraPaths": [
+      "./source"
+    ]
+  }
+  

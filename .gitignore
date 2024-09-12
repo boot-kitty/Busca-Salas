@@ -1,9 +1,8 @@
 # Auto generated files:
-/__pycache__
+/__pycache__/
 /datos/*~lock**
+/source/__pycache__/
+/testing/__pycache__/
 
 # Miscellaneous data:
-/Misc
-
-# Testing data:
-/Testing
+/misc

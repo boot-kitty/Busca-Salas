@@ -1,6 +1,6 @@
 {
     "urls-data":{
-        "semestre_actual": "2024-1",
+        "semestre_actual": "2024-2",
         "url_components": {
             "domain_request":"https://buscacursos.uc.cl/?",
             "semester": "cxml_semestre=",

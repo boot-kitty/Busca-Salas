@@ -63,7 +63,7 @@ def assemble_url(url_data: dict, campus:str, unidad_academica: int, modulo='') -
     return url
 
 
-def build_urls_list(unidades_academicas:list, url_data:dict, campus="San+Joaqu%C3%ADn", restrictions={}) -> list:
+def build_urls_list(unidades_academicas:list, url_data:dict, campus:str, restrictions={}) -> list:
     """
     This function creates a list holding all the urls for search queries that can be used by 'run_webscrapper'
     """

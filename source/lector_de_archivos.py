@@ -105,16 +105,15 @@ def reescribir_horarios_sala(horarios: dict):
     return horarios_bonitos
 
 
-def guardar_datos_salas_binary(dict_salas: dict):
+def guardar_datos_salas_binary(dict_salas: dict, directory: str):
     """
     Esta función guarda el diccionario conteniendo las instancias 'Sala' del campus SJ con sus respectivos horarios en un archivo binario
     """
-    directorio_datos_salas = os.path.join(*obtener_parametro("paths", "directorio_salas_bin"))
-    with open(directorio_datos_salas, "wb") as archivo_datos:
+    with open(directory, "wb") as archivo_datos:
         pickle.dump(dict_salas, archivo_datos)
 
 
-def guardar_datos_salas_json(datos_salas: dict):
+def guardar_datos_salas_json(datos_salas: dict, directory: str):
     """
     Esta función guarda el diccionario conteniendo las instancias 'Sala' del campus SJ con sus respectivos horarios en un archivo json
     """
@@ -126,17 +125,17 @@ def guardar_datos_salas_json(datos_salas: dict):
             "horarios": reescribir_horarios_sala(datos_salas[sala].horarios)
             })
         
-    directorio_datos_salas = os.path.join(*obtener_parametro("paths", "directorio_salas_json"))
-    with open(directorio_datos_salas, "w") as archivo_datos:
+    with open(directory, "w") as archivo_datos:
         json.dump(array_salas, archivo_datos)
 
 
-def actualizar_datos_salas_con_webscrapper():
+def actualizar_datos_salas_con_webscrapper(campus="san_joaquin"):
     print("\nGenerando una nueva base de datos")
     urls_data = obtener_parametro('urls-data')
 
     print("Generando urls")
-    urls_list = ws.build_urls_list(urls_data['unidades_academicas'], urls_data)
+    campus_url = obtener_parametro("campus_scrapping_url", campus)
+    urls_list = ws.build_urls_list(urls_data['unidades_academicas'], urls_data, campus_url)
 
     print("Añadiendo datos de buscacursos")
     df = ws.run_webscrapper(urls_list, urls_data, urls_data['unidades_academicas_por_codigo'], 
@@ -151,15 +150,15 @@ def actualizar_datos_salas_con_webscrapper():
 
     print("Actualizando horarios de Salas")
     actualizar_horarios_diccionario_salas(df_limpio, dict_salas)
-    directorio_datos_salas_bin = os.path.join(*obtener_parametro("paths", "directorio_salas_bin"))
+    directorio_datos_salas_bin = os.path.join("database", f"{campus}.bin")
     
     print(f"Guardando datos en '{directorio_datos_salas_bin}'")
-    guardar_datos_salas_binary(dict_salas)
+    guardar_datos_salas_binary(dict_salas, directorio_datos_salas_bin)
     c.console_log("Guardado exitoso!", "success")
 
-    directorio_datos_salas_json = os.path.join(*obtener_parametro("paths", "directorio_salas_json"))
+    directorio_datos_salas_json = os.path.join("database", f"{campus}.json")
     print(f"Guardando datos en '{directorio_datos_salas_json}'")
-    guardar_datos_salas_json(dict_salas)
+    guardar_datos_salas_json(dict_salas, directorio_datos_salas_json)
     c.console_log("Guardado exitoso!", "success")
 
 
@@ -181,6 +180,10 @@ def cargar_datos_salas() -> dict:
 if __name__ == "__main__":
     start_time = t.time()
 
-    actualizar_datos_salas_con_webscrapper()
-    
+    #actualizar_datos_salas_con_webscrapper("san_joaquin")
+    actualizar_datos_salas_con_webscrapper("casa_central")
+    actualizar_datos_salas_con_webscrapper("lo_contador")
+    actualizar_datos_salas_con_webscrapper("campus_oriente")
+    actualizar_datos_salas_con_webscrapper("villarica")
+
     print("--- %s seconds ---" % (t.time() - start_time))

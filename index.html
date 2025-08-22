@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtro de Horarios</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Selector de Horarios</h1>
+        
+        <div class="controls">
+            <select id="dataSelector" onchange="loadData()">
+                <option value="san_joaquin">San Joaquín</option>
+                <option value="casa_central">Casa Central</option>
+                <option value="lo_contador">Lo Contador</option>
+                <option value="campus_oriente">Campus Oriente</option>
+                <option value="villarica">Villarica</option>
+            </select>
+            <button onclick="clearSelection()">Limpiar Selección</button>
+            <button onclick="selectAll()">Seleccionar Todo</button>
+        </div>
+
+        <div class="timetable" id="timetable">
+            <div class="header">Bloques</div>
+            <div class="header">L</div>
+            <div class="header">M</div>
+            <div class="header">W</div>
+            <div class="header">J</div>
+            <div class="header">V</div>
+            <div class="header">S</div>
+        </div>
+
+        <div class="results">
+            <h3>Lugares Disponibles:</h3>
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

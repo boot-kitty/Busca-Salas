@@ -25,16 +25,15 @@ def find_academic_unit_code(url:str) -> str:
 def check_site_warnings(soup:BeautifulSoup, site_warnings):
     try:
         warning_msg = soup.find('div', class_='bordeBonito').text.strip()
+        broad_search_warnings = site_warnings[1:]
 
         if warning_msg == site_warnings[0]:
             return e.ErrorBusquedaVacia
         
-        elif warning_msg == site_warnings[1]:
+        elif warning_msg in broad_search_warnings:
             return e.ErrorBusquedaMuyAmplia
-        
-        elif warning_msg == site_warnings[2]:
-            return e.ErrorBusquedaMuyAmplia
-        
+
+
         # In case an undefined error pops up
         else:
             c.console_log("WARNING INESPERADO!", "error")

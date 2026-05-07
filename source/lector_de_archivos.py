@@ -180,7 +180,7 @@ def cargar_datos_salas() -> dict:
 if __name__ == "__main__":
     start_time = t.time()
 
-    #actualizar_datos_salas_con_webscrapper("san_joaquin")
+    actualizar_datos_salas_con_webscrapper("san_joaquin")
     actualizar_datos_salas_con_webscrapper("casa_central")
     actualizar_datos_salas_con_webscrapper("lo_contador")
     actualizar_datos_salas_con_webscrapper("campus_oriente")
